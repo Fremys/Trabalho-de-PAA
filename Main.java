@@ -6,6 +6,7 @@ class Figura{
     private int x1;
     private int x2;
     private int x3;
+    private int altura;
 
     public Figura(int x1, int x2, int x3){
         
@@ -66,6 +67,47 @@ class Figura{
         this.x3 = x3;
     }
 
+    public int getValueBaseMaior(){
+
+        return (this.x1 <= (this.x2 + this.x3) ? (this.x2 + this.x3) : this.x1);
+    }
+
+    public int getValueBaseMenor(){
+
+        return (this.x1 >= (this.x2 + this.x3) ? (this.x2 + this.x3) : this.x1);
+    }
+
+    public int getArea(){
+        int area = -1;
+
+        area = (getValueBaseMaior() + getValueBaseMenor() * this.altura)/2;
+
+        return area;
+    }
+
+    public String getConector(Figura figProx){
+        String faceConector = "";
+
+        if(this.getX2() < this.getX1()){
+
+            if(((this.getX1() - this.getX2()) > (figProx.getX3() * -1))){
+                faceConector = "up";
+            }else{
+                faceConector = "down";
+            }
+        }else{
+            if(this.getX2() > this.getX1()){
+                if(((this.getX2() - this.getX1()) > figProx.getX3())){
+                    faceConector = "down";
+                }else{
+                    faceConector = "up";
+                }
+            }
+
+        }
+        return faceConector;
+    }
+
 
 }
 
@@ -102,7 +144,7 @@ public class Main{
 
         }
 
-        System.out.println(fig[0].getX1());
+        System.out.println(fig[0].getConector(fig[1]));
 
 
     }
