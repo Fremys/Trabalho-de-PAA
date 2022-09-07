@@ -84,6 +84,8 @@ class Figura {
         return area;
     }
 
+    /*
+     * 
     public String getConector(Figura figProx) {
         String faceConector = "";
 
@@ -116,7 +118,7 @@ class Figura {
         }
         return faceConector;
     }
-
+    */
 }
 
 public class Main {
@@ -199,13 +201,6 @@ public class Main {
             fig[i] = new Figura(x1, x2, x3);
 
         }
-
-        System.out.println("0");
-        System.out.println(fig[0].getValueBaseMaior());
-        System.out.println(fig[0].getValueBaseMenor());
-        System.out.println("1");
-        System.out.println(fig[1].getValueBaseMaior());
-        System.out.println(fig[1].getValueBaseMenor());
 
         System.out.println(desperdicio(fig));
 
