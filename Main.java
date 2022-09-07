@@ -1,6 +1,118 @@
 import java.util.*;
 import java.util.Scanner;
 
+class DesperdicioFig {
+
+    // número da permutação atual
+    private static int cont = 0;
+
+    // armazena a permutação corrente
+    private static Figura[] p;
+
+    //Armazena o vetor de menor desperdício
+    Figura[] result;
+
+    DesperdicioFig() {
+    }
+    
+    //Método que verifica a igualdade de figuras
+    private boolean isEqual(Figura fig1, Figura fig2) {
+        return (fig1.getX1() == fig2.getX1() && fig1.getX2() == fig2.getX2() && fig1.getX3() == fig2.getX3());
+    }
+
+    //Método iterativo que calcula o desperdício de cada vetor de figuras
+    public float desperdicio(Figura[] fig) {
+
+        // Definir dados
+        float result = 0;
+        int altura = 100;
+        float area = 0;
+        int somaAreasFig = 0;
+
+        // Chamar Iteração
+        for (int i = 0; i < (fig.length - 1); i++) {
+            // Pegar area do trapézio
+            somaAreasFig += fig[i].getArea();
+
+            // Descobrir x3 da próxima figura
+            float x3Future = fig[i + 1].getX3();
+
+            // somando sobra de x3 da figura analisada
+            if (fig[i].getX3() < 0)
+                result += (fig[i].getX3() * -1);
+
+            // Descobrir se a posição da sobra
+            if (fig[i].getX1() > fig[i].getX2()) {
+                // Verificar se sobra da figura analisada é maior que a sobra da posterior
+                if ((fig[i].getX1() - fig[i].getX2()) >= (x3Future * -1)) {
+                    result += fig[i].getX1();
+                } else {
+                    result += fig[i].getX2();
+                }
+            } else {
+                // Verificar se a sobra da figura analisada é maior que o encaixe da posterior
+                if ((fig[i].getX2() - fig[i].getX1()) >= (x3Future)) {
+                    result += fig[i].getX2();
+                } else {
+                    result += fig[i].getX1();
+                }
+            }
+        }
+
+        // Tratando da última figura do vetor
+        result += fig[(fig.length - 1)].getX1() >= fig[(fig.length - 1)].getX2() ? fig[(fig.length - 1)].getX1()
+                : fig[(fig.length - 1)].getX2();
+
+        // Pegar area do trapézio
+        somaAreasFig += fig[(fig.length - 1)].getArea();
+
+        area = result * altura;
+
+        return (area - somaAreasFig);
+    }
+
+    //Método principal: recebe o vetor cujos elementos que serão permutados
+    public Figura[] menorDesperdicio(Figura[] vet) {
+        p = new Figura[vet.length];
+        result = new Figura[vet.length];
+        menorDesperdicio(vet, 0, Float.MAX_VALUE);
+        return result;
+    }
+
+    //Método recursivo que implementa as permutações para descobrir o menor desperdício
+    private void menorDesperdicio(Figura[] vet, int n, float desperdicio) {
+        float desperdicioCourrent = desperdicio;
+
+        if (n == vet.length) {
+            cont++;
+            desperdicioCourrent = desperdicio(p);
+            if(desperdicioCourrent < desperdicio) result = p;
+
+        } else {
+
+            for (int i = 0; i < vet.length; i++) {
+
+                boolean achou = false;
+
+                for (int j = 0; j < n; j++) {
+                    if (isEqual(p[j], vet[i]))
+                        achou = true;
+                }
+
+                if (!achou) {
+                    p[n] = vet[i];
+                    menorDesperdicio(vet, n + 1, desperdicioCourrent);
+                }
+
+            }
+
+        }
+
+    }
+
+
+}
+
 class Figura {
     // Ler dimensões da figura
     private int x1;
@@ -86,39 +198,39 @@ class Figura {
 
     /*
      * 
-    public String getConector(Figura figProx) {
-        String faceConector = "";
-
-        if (this.getX2() < this.getX1()) {
-
-            if (((this.getX1() - this.getX2()) > (figProx.getX3() * -1))) {
-                faceConector = "up";
-            } else {
-                if (((this.getX1() - this.getX2()) == (figProx.getX3() * -1))) {
-                    faceConector = "perfect";
-                } else {
-
-                    faceConector = "down";
-                }
-            }
-        } else {
-            if (this.getX2() > this.getX1()) {
-                if (((this.getX2() - this.getX1()) > figProx.getX3())) {
-                    faceConector = "down";
-                } else {
-                    if (((this.getX1() - this.getX2()) == (figProx.getX3() * -1))) {
-                        faceConector = "perfect";
-                    } else {
-
-                        faceConector = "up";
-                    }
-                }
-            }
-
-        }
-        return faceConector;
-    }
-    */
+     * public String getConector(Figura figProx) {
+     * String faceConector = "";
+     * 
+     * if (this.getX2() < this.getX1()) {
+     * 
+     * if (((this.getX1() - this.getX2()) > (figProx.getX3() * -1))) {
+     * faceConector = "up";
+     * } else {
+     * if (((this.getX1() - this.getX2()) == (figProx.getX3() * -1))) {
+     * faceConector = "perfect";
+     * } else {
+     * 
+     * faceConector = "down";
+     * }
+     * }
+     * } else {
+     * if (this.getX2() > this.getX1()) {
+     * if (((this.getX2() - this.getX1()) > figProx.getX3())) {
+     * faceConector = "down";
+     * } else {
+     * if (((this.getX1() - this.getX2()) == (figProx.getX3() * -1))) {
+     * faceConector = "perfect";
+     * } else {
+     * 
+     * faceConector = "up";
+     * }
+     * }
+     * }
+     * 
+     * }
+     * return faceConector;
+     * }
+     */
 }
 
 public class Main {
@@ -127,53 +239,8 @@ public class Main {
         return (0);
     }
 
-    public static float desperdicio(Figura[] fig) {
-
-        // Definir dados
-        float result = 0;
-        int altura = 100;
-        float area = 0;
-        int somaAreasFig = 0;
-
-        // Chamar Iteração
-        for (int i = 0; i < (fig.length - 1); i++) {
-            //Pegar area do trapézio
-            somaAreasFig += fig[i].getArea();
-
-            // Descobrir x3 da próxima figura
-            float x3Future = fig[i + 1].getX3();
-
-            //somando  sobra de x3 da figura analisada
-            if (fig[i].getX3() < 0)
-                result += (fig[i].getX3() * -1);
-
-            // Descobrir se a posição da sobra
-            if (fig[i].getX1() > fig[i].getX2()) {
-                //Verificar se sobra da figura analisada é maior que a sobra da posterior
-                if ((fig[i].getX1() - fig[i].getX2()) >= (x3Future * -1)) {
-                    result += fig[i].getX1();
-                } else {
-                    result += fig[i].getX2();
-                }
-            } else {
-                //Verificar se a sobra da figura analisada é maior que o encaixe da posterior
-                if ((fig[i].getX2() - fig[i].getX1()) >= (x3Future)) {
-                    result += fig[i].getX2();
-                } else {
-                    result += fig[i].getX1();
-                }
-            }
-        }
-
-        // Tratando da última figura do vetor
-        result += fig[(fig.length - 1)].getX1() >= fig[(fig.length - 1)].getX2() ? fig[(fig.length - 1)].getX1() : fig[(fig.length - 1)].getX2();
-
-        //Pegar area do trapézio
-        somaAreasFig += fig[(fig.length - 1)].getArea();
-
-        area = result * altura;
-
-        return (area - somaAreasFig);
+    public static boolean isEqual(Figura fig1, Figura fig2) {
+        return (fig1.getX1() == fig2.getX1() && fig1.getX2() == fig2.getX2() && fig1.getX3() == fig2.getX3());
     }
 
     public static void main(String[] args) {
@@ -181,28 +248,32 @@ public class Main {
         Scanner read = new Scanner(System.in);
         int qtdFiguras = 2;
         Figura fig[] = new Figura[qtdFiguras];
+        Figura menorDesperdicio[];
+        DesperdicioFig des = new DesperdicioFig();
+
 
         // Fazer leitura dos dados da figura
         for (int i = 0; i < qtdFiguras; i++) {
 
-            System.out.println("Digitar:");
+        System.out.println("Digitar:");
 
-            System.out.println("x1:");
-            int x1 = read.nextInt();
+        System.out.println("x1:");
+        int x1 = read.nextInt();
 
-            System.out.println("x2:");
-            int x2 = read.nextInt();
+        System.out.println("x2:");
+        int x2 = read.nextInt();
 
-            System.out.println("x3:");
-            int x3 = read.nextInt();
+        System.out.println("x3:");
+        int x3 = read.nextInt();
 
-            System.out.print("\n");
+        System.out.print("\n");
 
-            fig[i] = new Figura(x1, x2, x3);
+        fig[i] = new Figura(x1, x2, x3);
 
         }
 
-        System.out.println(desperdicio(fig));
+        menorDesperdicio = des.menorDesperdicio(fig);
 
+        System.out.println("menor desperdicio: " + des.desperdicio(menorDesperdicio));
     }
 }
