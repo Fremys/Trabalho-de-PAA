@@ -14,7 +14,7 @@ class DesperdicioFig {
 
     DesperdicioFig() {
     }
-    
+
     //Método que verifica a igualdade de figuras
     private boolean isEqual(Figura fig1, Figura fig2) {
         return (fig1.getX1() == fig2.getX1() && fig1.getX2() == fig2.getX2() && fig1.getX3() == fig2.getX3());
@@ -28,6 +28,7 @@ class DesperdicioFig {
         int altura = 100;
         float area = 0;
         int somaAreasFig = 0;
+        String finish = "";
 
         // Chamar Iteração
         for (int i = 0; i < (fig.length - 1); i++) {
@@ -45,23 +46,41 @@ class DesperdicioFig {
             if (fig[i].getX1() > fig[i].getX2()) {
                 // Verificar se sobra da figura analisada é maior que a sobra da posterior
                 if ((fig[i].getX1() - fig[i].getX2()) >= (x3Future * -1)) {
+                    finish = "up";
                     result += fig[i].getX1();
                 } else {
+                    finish = "down";
                     result += fig[i].getX2();
                 }
             } else {
                 // Verificar se a sobra da figura analisada é maior que o encaixe da posterior
                 if ((fig[i].getX2() - fig[i].getX1()) >= (x3Future)) {
+                    finish = "down";
                     result += fig[i].getX2();
                 } else {
+                    finish = "up";
                     result += fig[i].getX1();
                 }
             }
         }
 
         // Tratando da última figura do vetor
-        result += fig[(fig.length - 1)].getX1() >= fig[(fig.length - 1)].getX2() ? fig[(fig.length - 1)].getX1()
-                : fig[(fig.length - 1)].getX2();
+
+        String sobra = fig[(fig.length - 1)].getX1() >= fig[(fig.length - 1)].getX2() ? "up" : "down";
+
+        if(finish == "top"){
+            result += fig[fig.length - 1].getX1();
+            //somar com sobra
+            result += sobra == "down" ? fig[fig.length - 1].getX2() - fig[fig.length - 1].getX1() : 0;
+        }else{
+            if(fig[fig.length - 1].getX3() < 0){
+                result += (fig[fig.length - 1].getX3() * -1);
+            }
+            result += fig[fig.length - 1].getX2();
+
+            //somar com a sobra
+            result += sobra == "up" ? fig[fig.length - 1].getX1() - fig[fig.length - 1].getX2() : 0;
+        }
 
         // Pegar area do trapézio
         somaAreasFig += fig[(fig.length - 1)].getArea();
@@ -178,9 +197,42 @@ class Figura {
         this.x3 = x3;
     }
 
-    public int getValueBaseMaior() {
+    public int[] getValueBases() {
+        //Definir dados
+        int result [] = new int[2];
+        int x3Modified = this.x3 < 0 ? this.x3 * -1 : this.x3;
 
-        return (this.x1 <= (this.x2 + this.x3) ? (this.x2 + this.x3) : this.x1);
+        if(this.x2 > 0 && this.x3 < 0){
+            if(this.x1 >= (this.x2 + x3Modified)){
+                result[0] = this.x1;
+                result[1] = this.x2 + x3Modified;
+            }else{
+                result[0] = this.x2 + x3Modified;
+                result[1] = this.x1;
+            }
+        }else{
+            if(this.x3 > 0){
+                if(this.x1 >= this.x2){
+                    result[0] = this.x1;
+                    result[1] = this.x2;
+                }else{
+                    result[0] = this.x2;
+                    result[1] = this.x1;
+                }
+            }
+            if(this.x2 < 0){
+                if(this.x1 >= x3Modified){
+                    result[0] = this.x1;
+                    result[1] = x3Modified;
+                }else{
+                    result[0] = x3Modified;
+                    result[1] = this.x1;
+                }
+            }
+        }
+
+
+        return result;
     }
 
     public int getValueBaseMenor() {
@@ -190,26 +242,27 @@ class Figura {
 
     public int getArea() {
         int area = -1;
+        int basesValue [] = getValueBases();
 
-        area = ((getValueBaseMaior() + getValueBaseMenor()) * this.altura) / 2;
+        area = ((basesValue[0] + basesValue[1]) * this.altura) / 2;
 
         return area;
     }
 
     /*
-     * 
+     *
      * public String getConector(Figura figProx) {
      * String faceConector = "";
-     * 
+     *
      * if (this.getX2() < this.getX1()) {
-     * 
+     *
      * if (((this.getX1() - this.getX2()) > (figProx.getX3() * -1))) {
      * faceConector = "up";
      * } else {
      * if (((this.getX1() - this.getX2()) == (figProx.getX3() * -1))) {
      * faceConector = "perfect";
      * } else {
-     * 
+     *
      * faceConector = "down";
      * }
      * }
@@ -221,17 +274,18 @@ class Figura {
      * if (((this.getX1() - this.getX2()) == (figProx.getX3() * -1))) {
      * faceConector = "perfect";
      * } else {
-     * 
+     *
      * faceConector = "up";
      * }
      * }
      * }
-     * 
+     *
      * }
      * return faceConector;
      * }
      */
 }
+
 
 public class Main {
 
@@ -239,7 +293,7 @@ public class Main {
         return (0);
     }
 
-    public static boolean isEqual(Figura fig1, Figura fig2) {
+    public static boolean iEsqual(Figura fig1, Figura fig2) {
         return (fig1.getX1() == fig2.getX1() && fig1.getX2() == fig2.getX2() && fig1.getX3() == fig2.getX3());
     }
 
@@ -250,7 +304,6 @@ public class Main {
         Figura fig[] = new Figura[qtdFiguras];
         Figura menorDesperdicio[];
         DesperdicioFig des = new DesperdicioFig();
-
 
         // Fazer leitura dos dados da figura
         for (int i = 0; i < qtdFiguras; i++) {
@@ -272,8 +325,9 @@ public class Main {
 
         }
 
-        menorDesperdicio = des.menorDesperdicio(fig);
+        // menorDesperdicio = des.menorDesperdicio(fig);
 
-        System.out.println("menor desperdicio: " + des.desperdicio(menorDesperdicio));
+        // System.out.println("menor desperdicio: " + des.desperdicio(fig));
+        System.out.println("menor desperdicios: " + (fig[0].getArea()));
     }
 }
